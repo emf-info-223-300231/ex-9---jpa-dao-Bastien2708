@@ -47,6 +47,14 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
      */
     @Override
     public void creer(E e) throws MyDBException {
+        try {
+            et.begin();
+            em.persist(e);
+            et.commit();
+        } catch (Exception ex) {
+            et.rollback();
+            throw new MyDBException(SystemLib.getFullMethodName(), ex.getMessage());
+        }
     }
 
     /**
@@ -188,8 +196,19 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
      */
     @Override
     public int effacerListe() throws MyDBException {
-        int nb;
-        return nb;
+        int nombre = 0;
+        try {
+            et.begin();
+            for (E e : lireListe()) {
+                em.remove(e);
+                nombre++;
+            }
+            et.commit();
+        } catch (Exception e) {
+            et.rollback();
+            throw new MyDBException(SystemLib.getFullMethodName(), e.getMessage());
+        }
+        return nombre;
     }
 
     /**
@@ -201,8 +220,19 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
      */
     @Override
     public int sauverListe(List<E> list) throws MyDBException {
-        int nb = 0;
-        return nb;
+        int nombre = 0;
+        try {
+            et.begin();
+            for (E e : list) {
+                em.persist(e);
+                nombre++;
+            }
+            et.commit();
+        } catch (Exception e) {
+            et.rollback();
+
+        }
+        return nombre;
     }
 
     /**
