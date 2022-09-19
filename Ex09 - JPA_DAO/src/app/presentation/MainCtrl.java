@@ -1,6 +1,8 @@
 package app.presentation;
 
-
+import app.beans.Departement;
+import app.beans.Localite;
+import app.beans.Personne;
 import app.exceptions.MyDBException;
 import app.helpers.DateTimeLib;
 import app.helpers.JfxPopup;
@@ -67,9 +69,9 @@ public class MainCtrl implements Initializable {
     @FXML
     private DatePicker dateNaissance;
     @FXML
-    private ComboBox<?> cbxLocalite;
+    private ComboBox<Localite> cbxLocalite;
     @FXML
-    private ComboBox<?> cbxDepartement;
+    private ComboBox<Departement> cbxDepartement;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -301,5 +303,10 @@ public class MainCtrl implements Initializable {
     @FXML
     private void menuRechercher(ActionEvent event) {
         String nomARechercher = JfxPopup.askInfo("Recherche", "Rechercher une personne avec le son nom", "Insérer le nom à rechercher");
+        try {
+            afficherPersonne(dbWrk.rechercherPersonneAvecNom(nomARechercher));
+        } catch (MyDBException ex) {
+            JfxPopup.displayError("ERREUR", null, ex.getMessage());
+        }
     }
 }
